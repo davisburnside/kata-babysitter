@@ -9,7 +9,7 @@ package kata.babysitter;
 //gets paid for full hours (no fractional hours)
 // USAGE:
 // Call this program from the command line with three args: start time, bedtime, & end time
-// I was not sure if bedtime could be before the babysitter starts or if bedtime could occur after midnight, so I allowed both.
+// Accoring to the logic above, I disallowed a bedtime after midnight
 public class KataBabySitter {
 
     // ':' is a reserved character in terminal
@@ -95,18 +95,23 @@ public class KataBabySitter {
 
     public static boolean checkValidBabySittingTimes(int startTime, int bedtime, int endTime) {
 
-	if ((startTime < 1700 && startTime >= 400) || startTime < 0 || startTime > 2400) {
-	    System.out.println("Enter a start time (between 5PM and 3:59 AM)");
+	if (startTime < 1700 || startTime >= 2800) {
+	    System.out.println("Enter a valid start time (between 5PM and 3:59 AM)");
 	    return false;
 	}
 
-	if ((endTime <= 1700 && endTime > 400) || endTime < 0 || endTime > 2400) {
-	    System.out.println("Enter a end time (between 5:01PM and 4 AM)");
+	if (endTime <= 1700 || endTime > 2800) {
+	    System.out.println("Enter a valid end time (between 5:01PM and 4 AM)");
 	    return false;
 	}
 
 	if (endTime <= startTime) {
-	    System.out.println("Start time must be before endtime");
+	    System.out.println("Start time must be before end time");
+	    return false;
+	}
+	
+	if (bedtime > 2400) {
+	    System.out.println("bed time must be before midnight");
 	    return false;
 	}
 
@@ -120,10 +125,35 @@ public class KataBabySitter {
 	int totalPay = 0;
 	int timeTicker = startTime;
 
-//	while (timeTicker <= endTime) {
-//
-//	    timeTicker += 100;
-//	}
+	// DEBUG:
+//	System.out.println("Start: " + startTime + "  Bed: " + bedTime + " End: " + endTime);
+
+	while ((timeTicker += 100) <= endTime) {
+	    
+	    // If time is BEFORE bedtime and BEFORE midnight
+	    if (timeTicker <= bedTime && timeTicker <= 2400){
+		totalPay += baseRate * 1.5;
+	    }
+	    
+	    // If time is AFTER bedtime and BEFORE midnight
+	    else if (timeTicker > bedTime && timeTicker <= 2400){
+		totalPay += baseRate;
+	    }
+	    
+	    // If time is AFTER bedtime and AFTER midnight
+	    else if (timeTicker > bedTime && timeTicker > 2400){
+		totalPay += baseRate * 2;
+	    }
+	    
+	    // DEBUG:
+//	    System.out.println(timeTicker-100 + " -> " + timeTicker +  ": " + totalPay);
+	    	    
+	}
+	
+	// DEBUG:
+//	System.out.println("\n\n\n");
+	
+	
 	return totalPay;
     }
 }
