@@ -1,48 +1,42 @@
-
 package kata.babysitter;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class KataBabySitterTest {
-    
+
     public KataBabySitterTest() {
     }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
 
     @Test
-    public void testMain() {
-
-//	String[] args = new String[]{"1800","11pm"};
+    public void testTimeStandardization() {
 	
-	// Check time standardization 
-	assertTrue(KataBabySitter.standardizeTime("1800") == 1800);	
-	assertTrue(KataBabySitter.standardizeTime("1100pm") == 2300);
-	assertTrue(KataBabySitter.standardizeTime("7p") == 1900);
-	assertTrue(KataBabySitter.standardizeTime("7am") == 700);
-	
-//	KataBabySitter.main(args);
-	
+	assertTrue(KataBabySitter.standardizeTimeToModifiedMilitary("4f") == -1);
+	assertTrue(KataBabySitter.standardizeTimeToModifiedMilitary("1800") == 1800);
+	assertTrue(KataBabySitter.standardizeTimeToModifiedMilitary("1100pm") == 2300);
+	assertTrue(KataBabySitter.standardizeTimeToModifiedMilitary("1100a") == 1100);
+	assertTrue(KataBabySitter.standardizeTimeToModifiedMilitary("3am") == 2700);
+	assertTrue(KataBabySitter.standardizeTimeToModifiedMilitary("7p") == 1900);
+	assertTrue(KataBabySitter.standardizeTimeToModifiedMilitary("3pm") == 1500);
+	assertTrue(KataBabySitter.standardizeTimeToModifiedMilitary("0000") == 2400);
     }
     
+    @Test
+    public void testTimeValidityChecks() {
+
+	assertTrue(KataBabySitter.checkValidBabySittingTimes(1700, 1700, 2300));
+	assertFalse(KataBabySitter.checkValidBabySittingTimes(1400, 1700, 2300));
+	assertFalse(KataBabySitter.checkValidBabySittingTimes(1400, 1700, 401));
+    }
+    
+     @Test
+    public void testRateCalculation() {
+
+	//gets paid $12/hour from start-time to bedtime
+	//gets paid $8/hour from bedtime to midnight
+	//gets paid $16/hour from midnight to end of job
+	assertTrue(KataBabySitter.calculateRate(1700, 1800, 2000) == 28); // fails
+
+    }
+
 }

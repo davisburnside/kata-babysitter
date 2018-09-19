@@ -1,4 +1,3 @@
-
 package kata.babysitter;
 
 // RULES;
@@ -8,12 +7,9 @@ package kata.babysitter;
 //gets paid $8/hour from bedtime to midnight
 //gets paid $16/hour from midnight to end of job
 //gets paid for full hours (no fractional hours)
-//Feature
-//As a babysitter
-//In order to get paid for 1 night of work
-//I want to calculate my nightly charge
 // USAGE:
-// Call this program from the command line with two args: start & end times
+// Call this program from the command line with three args: start time, bedtime, & end time
+// I was not sure if bedtime could be before the babysitter starts or if bedtime could occur after midnight, so I allowed both.
 public class KataBabySitter {
 
     // ':' is a reserved character in terminal
@@ -23,61 +19,111 @@ public class KataBabySitter {
     // standard, hour only, no spaces (5PM, 11a)
     public static void main(String[] args) {
 
+	if (args.length >= 3) {
+
+	    // Check time validities
+	    Integer startTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[0]);
+	    Integer bedTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[1]);
+	    Integer endTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[2]);
+	    if (startTime != -1 || bedTime != -1 || endTime != -1) {
+		System.out.println("Enter valid time format (example: 1700, 5p, 500pm");
+		System.exit(1);
+	    }
+
+	    if (!KataBabySitter.checkValidBabySittingTimes(startTime, bedTime, endTime)) {
+		System.exit(1);
+	    }
+
+	} else {
+	    System.out.println("Enter a start and end time");
+	}
     }
 
-    public static Integer toInt(String string) {
+    public static int toInt(String string) {
 
 	try {
 	    Integer militaryTimeFormat = Integer.valueOf(string);
 	    return militaryTimeFormat;
 
 	} catch (NumberFormatException e) {
-	    return null;
+	    return -1;
 	}
     }
 
-    public static Integer standardizeTime(String timeString) {
+    public static int standardizeTimeToModifiedMilitary(String timeString) {
 
 	if (timeString == null || timeString.length() == 0) {
-	    return null;
+	    return -1;
 	}
 
-	// handle military time (no letters)
-	Integer directIntTranslation = KataBabySitter.toInt(timeString);
-	if (directIntTranslation != null && directIntTranslation >= 0 && directIntTranslation <= 2400) {
-	    return KataBabySitter.toInt(timeString);
-	}
-
-	// Handle standard time (AM / PM designation)
+	// Seperate time values from period 
 	String hourAndMinuteString = timeString.replaceAll("[a-zA-Z]+", "");
 	String periodString = timeString.replaceAll("\\d+", "");
 
-	// Handele hour-only
+	// Handle hour-only
 	if (hourAndMinuteString.length() <= 2) {
 	    hourAndMinuteString += "00";
 	}
 
-	Integer hourAndMinuteInt = KataBabySitter.toInt(hourAndMinuteString);
-	if (hourAndMinuteInt != null
-		&& ((periodString.equalsIgnoreCase("a") || periodString.equalsIgnoreCase("am")) || (periodString.equalsIgnoreCase("p") || periodString.equalsIgnoreCase("pm")))) {
+	int hourAndMinuteInt = KataBabySitter.toInt(hourAndMinuteString);
+	if (hourAndMinuteInt != -1) {
 
-	    if (periodString.startsWith("p")) {
-		hourAndMinuteInt += 1200;
+	    if (periodString != null && !periodString.equals("")) {
+
+		if ((periodString.equalsIgnoreCase("a") || periodString.equalsIgnoreCase("am"))
+			|| (periodString.equalsIgnoreCase("p") || periodString.equalsIgnoreCase("pm"))) {
+
+		    if (periodString.startsWith("p")) {
+			hourAndMinuteInt += 1200;
+		    }
+		}
+		else{
+		    return -1;
+		}
+	    }
+
+	    // shift AM times forward by 24 hours
+	    if (hourAndMinuteInt >= 0 && hourAndMinuteInt <= 400) {
+		hourAndMinuteInt += 2400;
 	    }
 
 	    return hourAndMinuteInt;
 	}
 
-	System.out.println("Invalid Parameter: " + timeString);
-	return null;
+	return -1;
     }
 
-    public static boolean checkValidBabySittingTime(int time) {
+    public static boolean checkValidBabySittingTimes(int startTime, int bedtime, int endTime) {
 
-	if ((time >= 1700 && time <= 2400) || (time >= 0 && time <= 400)) {
-	    return true;
+	if ((startTime < 1700 && startTime >= 400) || startTime < 0 || startTime > 2400) {
+	    System.out.println("Enter a start time (between 5PM and 3:59 AM)");
+	    return false;
 	}
-	return false;
+
+	if ((endTime <= 1700 && endTime > 400) || endTime < 0 || endTime > 2400) {
+	    System.out.println("Enter a end time (between 5:01PM and 4 AM)");
+	    return false;
+	}
+
+	if (endTime <= startTime) {
+	    System.out.println("Start time must be before endtime");
+	    return false;
+	}
+
+	return true;
+
     }
 
+    public static int calculateRate(int startTime, int bedTime, int endTime) {
+
+	double baseRate = 8;
+	int totalPay = 0;
+	int timeTicker = startTime;
+
+//	while (timeTicker <= endTime) {
+//
+//	    timeTicker += 100;
+//	}
+	return totalPay;
+    }
 }
