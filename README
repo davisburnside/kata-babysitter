@@ -1,0 +1,13 @@
+Navigate to project 
+cd <download location>/Kata-BabySitter-master
+
+Test project
+mvn test
+
+Build into JAR
+mvn clean package
+
+run file
+cd target
+java -jar calculatePay.jar <start time> <bed time> <end time>
+// valid time format examples (1700, 17, 500P, 5PM 5p)
