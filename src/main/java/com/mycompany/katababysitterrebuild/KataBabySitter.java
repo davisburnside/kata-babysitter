@@ -1,4 +1,4 @@
-package kata.babysitter;
+package com.mycompany.katababysitterrebuild;
 
 // RULES;
 //starts no earlier than 5:00PM
@@ -18,14 +18,14 @@ public class KataBabySitter {
     // standard, no spaces (500PM, 0200a)
     // standard, hour only, no spaces (5PM, 11a)
     public static void main(String[] args) {
-
+		
 	if (args.length >= 3) {
-
+	    
 	    // Check time validities
-	    Integer startTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[0]);
-	    Integer bedTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[1]);
-	    Integer endTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[2]);
-	    if (startTime != -1 || bedTime != -1 || endTime != -1) {
+	    int startTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[0]);
+	    int bedTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[1]);
+	    int endTime = KataBabySitter.standardizeTimeToModifiedMilitary(args[2]);
+	    if (startTime == -1 || bedTime == -1 || endTime == -1) {
 		System.out.println("Enter valid time format (example: 1700, 5p, 500pm");
 		System.exit(1);
 	    }
@@ -33,9 +33,12 @@ public class KataBabySitter {
 	    if (!KataBabySitter.checkValidBabySittingTimes(startTime, bedTime, endTime)) {
 		System.exit(1);
 	    }
+	    
+	    int amountEarned = KataBabySitter.calculateRate(startTime, bedTime, endTime);
+	    System.out.println("You earned $" + amountEarned);
 
 	} else {
-	    System.out.println("Enter a start and end time");
+	    System.out.println("Enter a start time, bedtime, and end time");
 	}
     }
 
@@ -60,7 +63,7 @@ public class KataBabySitter {
 	String hourAndMinuteString = timeString.replaceAll("[a-zA-Z]+", "");
 	String periodString = timeString.replaceAll("\\d+", "");
 
-	// Handle hour-only
+	// Handle hour-only time strings
 	if (hourAndMinuteString.length() <= 2) {
 	    hourAndMinuteString += "00";
 	}
@@ -68,6 +71,7 @@ public class KataBabySitter {
 	int hourAndMinuteInt = KataBabySitter.toInt(hourAndMinuteString);
 	if (hourAndMinuteInt != -1) {
 
+	    // If there is no period string, the time can be assumed to already be in military format
 	    if (periodString != null && !periodString.equals("")) {
 
 		if ((periodString.equalsIgnoreCase("a") || periodString.equalsIgnoreCase("am"))
@@ -78,6 +82,7 @@ public class KataBabySitter {
 		    }
 		}
 		else{
+		    System.out.println("Enter a valid AM/PM designation");
 		    return -1;
 		}
 	    }
